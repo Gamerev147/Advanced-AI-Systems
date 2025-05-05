@@ -35,6 +35,18 @@ public class PatrolPathEditor : Editor
             EditorUtility.SetDirty(m_Enemy);
         }
 
+        // Button to save patrol points preset
+        if (GUILayout.Button("Save Patrol Preset"))
+        {
+            SavePatrolPreset();
+        }
+
+        // Button to load a patrol preset
+        if (GUILayout.Button("Load Patrol Preset"))
+        {
+            LoadPatrolPreset();
+        }
+
         // Button to toggle the patrol point gizmos
         if (GUILayout.Button("Toggle Gizmos"))
         {
@@ -81,5 +93,76 @@ public class PatrolPathEditor : Editor
 
             if (_toggleGizmos) Handles.Label(worldPos + Vector3.up * 0.25f, $"Waypoint {i}");
         }
+    }
+
+    private void SavePatrolPreset()
+    {
+        // Get the save file path
+        string path = EditorUtility.SaveFilePanelInProject("Save Patrol Path", "NewPatrolPath", "asset", "Please enter a file name:");
+        if (string.IsNullOrEmpty(path)) return;
+
+        // Create a new SO containing the patrol points
+        AISO_PatrolPath newPreset = ScriptableObject.CreateInstance<AISO_PatrolPath>();
+        foreach (var point in m_Enemy.patrolPoints)
+        {
+            // Save the point in local space, relative to the entity
+            Vector3 localPos = m_Enemy.transform.InverseTransformPoint(point.Position);
+            newPreset.patrolPoints.Add(new PatrolPoint
+            {
+                Position = localPos,
+                SkipIdle = point.SkipIdle
+            });
+        }
+
+        AssetDatabase.CreateAsset(newPreset, path);
+        AssetDatabase.SaveAssets();
+
+        Debug.LogWarning("Patrol path saved to {path}");
+    }
+
+    private void LoadPatrolPreset()
+    {
+        // Get patrol preset path
+        string path = EditorUtility.OpenFilePanel("Load Patrol Preset", "Assets", "asset");
+        if (string.IsNullOrEmpty(path)) return;
+
+        // Convert path
+        if (path.StartsWith(Application.dataPath))
+        {
+            path = "Assets" + path.Substring(Application.dataPath.Length);
+        }
+
+        // Load the patrol point preset
+        AISO_PatrolPath loadedPreset = AssetDatabase.LoadAssetAtPath<AISO_PatrolPath>(path);
+        if (loadedPreset == null)
+        {
+            Debug.LogError("Failed to load patrol preset.");
+            return;
+        }
+
+        // Clear any existing waypoints
+        if (EditorUtility.DisplayDialog("Clear All?", "This will delete any existing waypoints. Do you wish to continue?", "Yes", "No"))
+        {
+            m_Enemy.patrolPoints.Clear();
+            EditorUtility.SetDirty(m_Enemy);
+        } else
+        {
+            return;
+        }
+
+        // Assign new patrol points
+        foreach (var point in loadedPreset.patrolPoints)
+        {
+            // Convert the points back to world space
+            Vector3 worldPos = m_Enemy.transform.TransformPoint(point.Position);
+            m_Enemy.patrolPoints.Add(new PatrolPoint
+            {
+                Position = worldPos,
+                SkipIdle = point.SkipIdle
+            });
+        }
+
+        EditorUtility.SetDirty(m_Enemy);
+        Debug.LogWarning("Loaded patrol path from preset.");
     }
 }

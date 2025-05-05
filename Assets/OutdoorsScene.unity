@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 7503.2, g: 6793.337, b: 6855.907, a: 1}
+  m_IndirectSpecularColor: {r: 7506.173, g: 6796.407, b: 6860.415, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -39056,7 +39056,7 @@ Transform:
   m_GameObject: {fileID: 3985335342201024068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 86.45, y: 0.0000026226044, z: 79.05}
+  m_LocalPosition: {x: 83.56, y: 0.0000026226044, z: 77.86}
   m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -42125,7 +42125,7 @@ MonoBehaviour:
   tickRate: 0.1
   lookToPlayerDistance: 4
   playerLookBlendSpeed: 0.75
-  fieldOfViewAngle: 155
+  fieldOfViewAngle: 152.6
   proximityDistance: 2.5
   viewDistance: 20
   awarenessRate: 0.25
@@ -42134,16 +42134,13 @@ MonoBehaviour:
   canPatrol: 1
   loopPatrol: 0
   patrolPoints:
-  - Position: {x: 87.46912, y: 0.0000026226044, z: 79.08163}
-    SkipIdle: 1
-    CustomWaitTime: -1
-  - Position: {x: 96.70507, y: 0.0000026226044, z: 79.49646}
+  - Position: {x: 84.292435, y: 0.0000026226044, z: 77.86}
     SkipIdle: 0
     CustomWaitTime: -1
-  - Position: {x: 94.49106, y: 0.0000026226044, z: 67.957535}
+  - Position: {x: 91.42382, y: 0.0000026226044, z: 77.86}
     SkipIdle: 0
     CustomWaitTime: -1
-  - Position: {x: 81.80915, y: 0.0000026226044, z: 69.58814}
+  - Position: {x: 91.495705, y: 0.0000026226044, z: 69.37229}
     SkipIdle: 0
     CustomWaitTime: -1
   player: {fileID: 1674901759}
@@ -42163,7 +42160,7 @@ MonoBehaviour:
   isDummy: 0
   showProximity: 0
   showLookProximity: 0
-  showFieldOfView: 0
+  showFieldOfView: 1
   showDebugText: 0
 --- !u!195 &7702629915161407111
 NavMeshAgent:

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c24f1e19d494d44fb3eb043f26aa63f, type: 3}
+  m_Name: ForwardRight
+  m_EditorClassIdentifier: 
+  patrolPoints:
+  - Position: {x: -0.000000054186042, y: 0, z: 0.665852}
+    SkipIdle: 0
+    CustomWaitTime: -1
+  - Position: {x: -0.0000008669767, y: 0, z: 7.148931}
+    SkipIdle: 0
+    CustomWaitTime: -1
+  - Position: {x: 7.7160993, y: 0, z: 7.214281}
+    SkipIdle: 0
+    CustomWaitTime: -1
