@@ -19,22 +19,6 @@ public enum GuardState
     Alert
 }
 
-public enum AwarenessState
-{
-    Idle,
-    Suspicious,
-    Investigating,
-    Alarmed
-}
-
-[System.Serializable]
-public class PatrolPoint
-{
-    public Vector3 Position;
-    public bool SkipIdle = false; // skip idling on the patrol point
-    public float CustomWaitTime = -1f; // use default wait time
-}
-
 public class GuardEnemy : MonoBehaviour
 {
     [Header("Main Properties")]
