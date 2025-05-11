@@ -1,18 +1,18 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GuardEnemy))]
+[CustomEditor(typeof(AI_Agent))]
 public class PatrolPathEditor : Editor
 {
-    private GuardEnemy m_Enemy;
+    private AI_Agent m_Agent;
     private Vector3 m_LastPosition;
 
     private bool _toggleGizmos = true;
 
     private void OnEnable()
     {
-        m_Enemy = (GuardEnemy)target;
-        m_LastPosition = m_Enemy.transform.position;
+        m_Agent = (AI_Agent)target;
+        m_LastPosition = m_Agent.transform.position;
     }
 
     public override void OnInspectorGUI()
@@ -22,17 +22,17 @@ public class PatrolPathEditor : Editor
         // Button to create patrol point in front of entity
         if (GUILayout.Button("Add Patrol Point"))
         {
-            Undo.RecordObject(m_Enemy, "Add Patrol Point");
+            Undo.RecordObject(m_Agent, "Add Patrol Point");
 
             // Add a new point 2 units in front of the entity
-            Vector3 defaultPosition = m_Enemy.transform.position + m_Enemy.transform.forward * 2f;
+            Vector3 defaultPosition = m_Agent.transform.position + m_Agent.transform.forward * 2f;
             PatrolPoint newPoint = new PatrolPoint
             {
                 Position = defaultPosition
             };
-            m_Enemy.patrolPoints.Add(newPoint);
+            m_Agent.PatrolPoints.Add(newPoint);
 
-            EditorUtility.SetDirty(m_Enemy);
+            EditorUtility.SetDirty(m_Agent);
         }
 
         // Button to save patrol points preset
@@ -59,36 +59,36 @@ public class PatrolPathEditor : Editor
 
     private void OnSceneGUI()
     {
-        Vector3 currentPos = m_Enemy.transform.position;
+        Vector3 currentPos = m_Agent.transform.position;
         Vector3 delta = currentPos - m_LastPosition;
 
         // Detect when the root game object is moved
         // Switch the coordinate space to local while moving, and world space when not moving
         if (!Application.isPlaying && delta != Vector3.zero)
         {
-            for (int i = 0; i < m_Enemy.patrolPoints.Count; i++)
+            for (int i = 0; i < m_Agent.PatrolPoints.Count; i++)
             {
-                m_Enemy.patrolPoints[i].Position += delta;
+                m_Agent.PatrolPoints[i].Position += delta;
             }
 
-            EditorUtility.SetDirty(m_Enemy);
+            EditorUtility.SetDirty(m_Agent);
         }
 
         m_LastPosition = currentPos;
 
         // Point editing
-        for (int i = 0; i < m_Enemy.patrolPoints.Count; i++)
+        for (int i = 0; i < m_Agent.PatrolPoints.Count; i++)
         {
-            PatrolPoint point = m_Enemy.patrolPoints[i];
+            PatrolPoint point = m_Agent.PatrolPoints[i];
             Vector3 worldPos = point.Position;
 
             EditorGUI.BeginChangeCheck();
             Vector3 newWorldPos = Handles.PositionHandle(worldPos, Quaternion.identity);
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(m_Enemy, "Move Waypoint");
+                Undo.RecordObject(m_Agent, "Move Waypoint");
                 point.Position = newWorldPos;
-                EditorUtility.SetDirty(m_Enemy);
+                EditorUtility.SetDirty(m_Agent);
             }
 
             if (_toggleGizmos) Handles.Label(worldPos + Vector3.up * 0.25f, $"Waypoint {i}");
@@ -103,10 +103,10 @@ public class PatrolPathEditor : Editor
 
         // Create a new SO containing the patrol points
         AISO_PatrolPath newPreset = ScriptableObject.CreateInstance<AISO_PatrolPath>();
-        foreach (var point in m_Enemy.patrolPoints)
+        foreach (var point in m_Agent.PatrolPoints)
         {
             // Save the point in local space, relative to the entity
-            Vector3 localPos = m_Enemy.transform.InverseTransformPoint(point.Position);
+            Vector3 localPos = m_Agent.transform.InverseTransformPoint(point.Position);
             newPreset.patrolPoints.Add(new PatrolPoint
             {
                 Position = localPos,
@@ -143,8 +143,8 @@ public class PatrolPathEditor : Editor
         // Clear any existing waypoints
         if (EditorUtility.DisplayDialog("Clear All?", "This will delete any existing waypoints. Do you wish to continue?", "Yes", "No"))
         {
-            m_Enemy.patrolPoints.Clear();
-            EditorUtility.SetDirty(m_Enemy);
+            m_Agent.PatrolPoints.Clear();
+            EditorUtility.SetDirty(m_Agent);
         } else
         {
             return;
@@ -154,15 +154,15 @@ public class PatrolPathEditor : Editor
         foreach (var point in loadedPreset.patrolPoints)
         {
             // Convert the points back to world space
-            Vector3 worldPos = m_Enemy.transform.TransformPoint(point.Position);
-            m_Enemy.patrolPoints.Add(new PatrolPoint
+            Vector3 worldPos = m_Agent.transform.TransformPoint(point.Position);
+            m_Agent.PatrolPoints.Add(new PatrolPoint
             {
                 Position = worldPos,
                 SkipIdle = point.SkipIdle
             });
         }
 
-        EditorUtility.SetDirty(m_Enemy);
+        EditorUtility.SetDirty(m_Agent);
         Debug.LogWarning("Loaded patrol path from preset.");
     }
 }

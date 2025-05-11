@@ -8,6 +8,8 @@ public class AI_StateIdle : AI_State
 
     public void Enter(AI_Agent agent, float arg = 0f)
     {
+        Debug.Log("Entered idle state");
+
         agent.StateTimer = 0f;
         agent.NavAgent.isStopped = true;
         float newIdleTime = Random.Range(agent.MinIdleDuration, agent.MaxIdleDuration);

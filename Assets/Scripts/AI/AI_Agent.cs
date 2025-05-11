@@ -1,11 +1,13 @@
 using StarterAssets;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public enum AwarenessState
 {
@@ -31,12 +33,15 @@ public class AI_Agent : MonoBehaviour
 
     [Header("Sensor Properties")]
     public float TickRate = 0.1f;
-    public float LookToPlayerDistance = 3f;
+    [Tooltip("Distance at which the AI looks at the player.")] public float LookToPlayerDistance = 3f;
     public float PlayerLookBlendSpeed = 3f;
     [Range(0f, 180f)] public float FieldOfViewAngle = 90f;
-    public float ProximityDistance = 2f;
-    public float ViewDistance = 12f;
-    public float AwarenessRate = 0.5f;
+    [Tooltip("Distance at which the AI immediately becomes aware.")] public float ProximityDistance = 2f;
+    [Tooltip("How far the AI can see.")] public float ViewDistance = 12f;
+    [Tooltip("How quickly the AI becomes aware.")] public float AwarenessRate = 0.5f;
+
+    [Tooltip("How much the distance to the player influences awareness."), Range(0f, 1f)]
+    public float AwarenessDistanceInfluence = 0.4f;
 
     [Header("Idle Properties")]
     public float MinIdleDuration = 4f;
@@ -50,6 +55,7 @@ public class AI_Agent : MonoBehaviour
     [Header("References")]
     [SerializeField] private LayerMask playerLayer, obstructionLayer;
     [SerializeField] private Rig playerLookRig;
+    public Rig HandHolsterRig;
 
     [Header("UI References")]
     [SerializeField] private GameObject sensorHUD;
@@ -69,6 +75,7 @@ public class AI_Agent : MonoBehaviour
     // These components are needed only by the state machine
     [HideInInspector] public NavMeshAgent NavAgent;
     [HideInInspector] public ThirdPersonController Player;
+    [HideInInspector] public Animator animator;
     [HideInInspector] public float StateTimer = 0f;
     [HideInInspector] public int CurrentPatrolIndex = 0;
     [HideInInspector] public int PatrolDirection = 1;
@@ -93,6 +100,7 @@ public class AI_Agent : MonoBehaviour
     {
         NavAgent = GetComponent<NavMeshAgent>();
         Player = GameObject.FindGameObjectWithTag("Player").GetComponent<ThirdPersonController>();
+        animator = GetComponent<Animator>();
 
         // State Machine Registration
         StateMachine = new AI_StateMachine(this);
@@ -117,6 +125,10 @@ public class AI_Agent : MonoBehaviour
 
         // Handle awareness calculations
         HandleAwareness();
+
+        // Update animation speeds
+        animator.SetFloat("Speed", NavAgent.velocity.magnitude);
+        //animator.SetFloat("IdleBlend", _currentIdleIndex, 0.5f, Time.deltaTime);
     }
 
     private void HandleAwareness()
@@ -128,13 +140,13 @@ public class AI_Agent : MonoBehaviour
         // Calculate overall player threat level
         float baseThreatLevel = 0f;
         _playerState = Player.GetPlayerState();
-        if (_playerState.Sprinting) baseThreatLevel += 0.35f;
+        if (_playerState.Sprinting) baseThreatLevel += 0.3f;
         if (_playerState.Crouching || _playerState.Covering) baseThreatLevel += 0.125f;
-        if (_playerState.WeaponDrawn) baseThreatLevel += 0.8f;
+        if (_playerState.WeaponDrawn) baseThreatLevel += 0.86f;
         if (!_playerState.Crouching && !_playerState.Covering && !_playerState.WeaponDrawn) baseThreatLevel += 0.05f;
-        if (!CanSeePlayer()) baseThreatLevel -= 0.04f;
+        if (!CanSeePlayer()) baseThreatLevel -= 0.15f;
 
-        float totalThreat = baseThreatLevel * _normalizedPlayerDistance;
+        float totalThreat = Mathf.Lerp(baseThreatLevel, baseThreatLevel * _normalizedPlayerDistance, AwarenessDistanceInfluence);
         totalThreat = Mathf.Clamp01(totalThreat);
         PlayerThreatLevel = totalThreat * 100f;
 
@@ -183,7 +195,8 @@ public class AI_Agent : MonoBehaviour
                 break;
             case AwarenessState.Investigating:
                 SetHUDGroup(alertGroup);
-
+                //fixme
+                /*
                 if (NavAgent.pathPending || NavAgent.remainingDistance > 0.1f)
                 {
                     _alertProgress = GetDestinationProgress();
@@ -211,6 +224,7 @@ public class AI_Agent : MonoBehaviour
                     _awarenessState = AwarenessState.Idle;
                     StateMachine.ChangeState(StateID.Idle);
                 }
+                */
                 break;
             case AwarenessState.Alarmed:
                 SetHUDGroup(alarmGroup);
@@ -346,21 +360,19 @@ public class AI_Agent : MonoBehaviour
             }
         }
 
-        if (LoopPatrol)
+        if (LoopPatrol && PatrolPoints.Count > 2)
         {
             Gizmos.DrawLine(PatrolPoints[PatrolPoints.Count - 1].Position, PatrolPoints[0].Position);
         }
 
         // Draw debug text
-        /*
         if (showDebugText)
         {
             Handles.Label(transform.position + (Vector3.up * 2f) + (Vector3.right * 0.75f), "N_Distance: " + _normalizedPlayerDistance.ToString());
             string spl = CanSeePlayer() ? "Yes" : "No";
             Handles.Label(transform.position + (Vector3.up * 2f) + (Vector3.right * 0.75f), "\n\nSee Player: " + spl);
             Handles.Label(transform.position + (Vector3.up * 1.5f) + (Vector3.right * 0.75f),
-                "Player Threat: " + _playerThreatLevel + "\nSuspicion: " + _suspicion);
+                "Player Threat: " + PlayerThreatLevel + "\nSuspicion: " + _suspicion);
         }
-        */
     }
 }

@@ -6,6 +6,8 @@ public class AI_StatePatrol : AI_State
 {
     public void Enter(AI_Agent agent, float arg = 0f)
     {
+        Debug.Log("Entered patrol state");
+
         agent.NavAgent.isStopped = false;
         if (agent.PatrolPoints.Count > 0)
         {
