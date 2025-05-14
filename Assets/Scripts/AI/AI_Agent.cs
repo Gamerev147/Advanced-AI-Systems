@@ -195,36 +195,24 @@ public class AI_Agent : MonoBehaviour
                 break;
             case AwarenessState.Investigating:
                 SetHUDGroup(alertGroup);
-                //fixme
-                /*
-                if (NavAgent.pathPending || NavAgent.remainingDistance > 0.1f)
+                if (PlayerThreatLevel > 45f)
                 {
-                    _alertProgress = GetDestinationProgress();
-                }
-                else
+                    _alertProgress += Time.deltaTime * AwarenessRate;
+                } else
                 {
                     _alertProgress -= Time.deltaTime * AwarenessRate;
                 }
+                _alertProgress = Mathf.Clamp01(_alertProgress);
 
-                if (_alertProgress >= 1f)
+                // Player was caught
+                if (_alertProgress >= 1f && CanSeePlayer())
                 {
-                    if (CanSeePlayer() && PlayerThreatLevel >= 0.75f) // fixme: this needs more conditions
-                    {
-                        _awarenessState = AwarenessState.Alarmed;
-                    }
-                    else
-                    {
-                        _awarenessState = AwarenessState.Idle;
-                        StateMachine.ChangeState(StateID.Idle);
-                    }
-                }
-
-                if (_alertProgress <= 0f)
+                    Debug.Log("Attacking player!");
+                    StateMachine.ChangeState(StateID.Attack);
+                } else if (_alertProgress >= 1f && !CanSeePlayer())
                 {
-                    _awarenessState = AwarenessState.Idle;
-                    StateMachine.ChangeState(StateID.Idle);
+                    _awarenessState = AwarenessState.Suspicious;
                 }
-                */
                 break;
             case AwarenessState.Alarmed:
                 SetHUDGroup(alarmGroup);
@@ -316,6 +304,11 @@ public class AI_Agent : MonoBehaviour
         return Mathf.Clamp01(progress);
     }
 
+    public void ChangeAwarenessState(AwarenessState state)
+    {
+        _awarenessState = state;
+    }
+
     private void OnDrawGizmosSelected()
     {
         // Disable unnecessary gizmos
@@ -344,25 +337,6 @@ public class AI_Agent : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, ProximityDistance);
-        }
-
-        // Patrol waypoints
-        Gizmos.color = Color.green;
-        for (int i = 0; i < PatrolPoints.Count; i++)
-        {
-            Vector3 worldPos = PatrolPoints[i].Position;
-            Gizmos.DrawSphere(worldPos, 0.25f);
-
-            if (i < PatrolPoints.Count - 1)
-            {
-                Vector3 nextPos = PatrolPoints[i + 1].Position;
-                Gizmos.DrawLine(worldPos, nextPos);
-            }
-        }
-
-        if (LoopPatrol && PatrolPoints.Count > 2)
-        {
-            Gizmos.DrawLine(PatrolPoints[PatrolPoints.Count - 1].Position, PatrolPoints[0].Position);
         }
 
         // Draw debug text

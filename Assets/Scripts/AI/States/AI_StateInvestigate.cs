@@ -24,11 +24,11 @@ public class AI_StateInvestigate : AI_State
             pauseDuration = arg;
         }
 
-        // Get player's current position
+        // Move to the player's last known position and pause
         targetPosition = agent.Player.transform.position;
+        agent.NavAgent.SetDestination(targetPosition);
 
-        // Stop agent and grab holster
-        agent.NavAgent.isStopped = true;
+        agent.NavAgent.isStopped = false;
         agent.HandHolsterRig.weight = 1f;
     }
 
@@ -44,25 +44,17 @@ public class AI_StateInvestigate : AI_State
 
     public void Update(AI_Agent agent)
     {
-        if (!finishedPausing)
+        // Agent finished moving to last know position
+        if (!agent.NavAgent.pathPending && agent.NavAgent.remainingDistance <= 0.1f)
         {
             pauseTimer += Time.deltaTime;
             if (pauseTimer >= pauseDuration)
             {
-                Debug.Log("Moving to last known player position");
-                agent.NavAgent.isStopped = false;
-                agent.NavAgent.SetDestination(targetPosition);
-                finishedPausing = true;
-            }
-        }
-
-        if (finishedPausing)
-        {
-            if (!agent.NavAgent.pathPending && agent.NavAgent.remainingDistance <= 0.1f)
-            {
-                if (agent.PlayerThreatLevel > 45f)
+                // Player is not a threat, return to idle
+                if (agent.PlayerThreatLevel <= 45f)
                 {
-                    //fixme
+                    agent.ChangeAwarenessState(AwarenessState.Suspicious);
+                    agent.StateMachine.ChangeState(StateID.Patrol);
                 }
             }
         }

@@ -25,12 +25,14 @@ public class PlayerTakedownController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && _animator.GetBool("WeaponActive") == false) // fixme: also need to check if weapon is active here...
+        if (Input.GetKeyDown(KeyCode.F) && _animator.GetBool("WeaponActive") == false)
         {
+            // Perform a standard takedown
             PerformMeleeAttack();
         } else if (Input.GetKeyDown(KeyCode.F) && _animator.GetBool("WeaponActive") == true)
         {
-            //fixme: disable hand rig then perform attack
+            // Otherwise perform weapon bash
+            PerformWeaponBash();
         }
     }
 
@@ -55,14 +57,22 @@ public class PlayerTakedownController : MonoBehaviour
                 _animator.SetTrigger("Takedown");
                 CameraController.Instance.ShakeCameraWobble(0.8f, 0.6f);
 
-                enemy.GetComponent<GuardEnemy>().isDummy = true;
+                enemy.GetComponent<AI_Agent>().isDummy = true;
                 enemy.GetComponent<NavMeshAgent>().isStopped = true;
                 enemy.GetComponent<Animator>().SetTrigger("Takedown");
             }
-            else
-            {
-                // Can't perform takedown, do another melee attack?
-            }
+        }
+    }
+
+    private void PerformWeaponBash()
+    {
+        FindEnemyInRange();
+        Transform enemy = GetNearestEnemy();
+
+        if (enemy != null)
+        {
+            _animator.SetTrigger("Melee");
+            CameraController.Instance.ShakeCameraWobble(0.8f, 0.6f);
         }
     }
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 7509.3506, g: 6799.4463, b: 6863.5635, a: 1}
+  m_IndirectSpecularColor: {r: 7506.456, g: 6796.3135, b: 6860.2666, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -27802,6 +27802,113 @@ MonoBehaviour:
   takedownCharacterOffset: 1
   takedownDistance: 2
   searchRadius: 8
+--- !u!1 &1686548229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1686548233}
+  - component: {fileID: 1686548232}
+  - component: {fileID: 1686548231}
+  - component: {fileID: 1686548230}
+  m_Layer: 0
+  m_Name: Alarm
+  m_TagString: Alarm
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1686548230
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686548229}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1686548231
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686548229}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_RenderingLayerMask: 257
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1686548232
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686548229}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1686548233
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686548229}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 73.508, y: -0.0000014305115, z: 81.681}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1698329497
 GameObject:
   m_ObjectHideFlags: 0
@@ -33793,7 +33900,12 @@ PrefabInstance:
     - target: {fileID: 448477829099622911, guid: 852062bd770909e45897936345325735,
         type: 3}
       propertyPath: m_WarningMessage
-      value: 
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'genSuit_RightHand'\n\tTransform 'genSuit_LeftHand'\n\tTransform
+        'genSuit_Spine'\n\tTransform 'genSuit_LeftArm'\n\tTransform 'genSuit_Hips'\n\tTransform
+        'genSuit_RightForeArm'\n\tTransform 'genSuit_LeftForeArm'\n\tTransform 'genSuit_RightHand'\n\tTransform
+        'genSuit_LeftHand'\n\tTransform 'genSuit_Spine'\n\tand more ..."
       objectReference: {fileID: 0}
     - target: {fileID: 1012635367809797781, guid: 852062bd770909e45897936345325735,
         type: 3}
@@ -39033,6 +39145,7 @@ GameObject:
   - component: {fileID: 7702629915161407108}
   - component: {fileID: 7702629915161407111}
   - component: {fileID: 7702629915161407112}
+  - component: {fileID: 7702629915161407113}
   - component: {fileID: 7702629915161407109}
   m_Layer: 0
   m_Name: Male_Guard_01
@@ -39212,7 +39325,7 @@ Transform:
   m_GameObject: {fileID: 3985335342201024068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 82.91, y: 0.0000026226044, z: 78.09}
+  m_LocalPosition: {x: 83.145, y: 0.0000026226044, z: 75.749}
   m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -42306,20 +42419,20 @@ MonoBehaviour:
   FieldOfViewAngle: 90
   ProximityDistance: 2
   ViewDistance: 12
-  AwarenessRate: 0.5
+  AwarenessRate: 0.25
   AwarenessDistanceInfluence: 0.4
   MinIdleDuration: 4
   MaxIdleDuration: 10
   CanPatrol: 1
   LoopPatrol: 0
   PatrolPoints:
-  - Position: {x: 83.789825, y: 0.0000026226044, z: 78.09}
+  - Position: {x: 84.02482, y: 0.0000026226044, z: 75.749}
     SkipIdle: 0
     CustomWaitTime: -1
-  - Position: {x: 91.54424, y: 0.0000026226044, z: 78.09}
+  - Position: {x: 91.779236, y: 0.0000026226044, z: 75.749}
     SkipIdle: 0
     CustomWaitTime: -1
-  - Position: {x: 91.58968, y: 0.0000026226044, z: 71.39515}
+  - Position: {x: 91.43649, y: 0.0000026226044, z: 69.13772}
     SkipIdle: 0
     CustomWaitTime: -1
   playerLayer:
@@ -42337,10 +42450,10 @@ MonoBehaviour:
   alertFill: {fileID: 1065317601}
   alarmGroup: {fileID: 333684044}
   isDummy: 0
-  showProximity: 1
-  showLookProximity: 1
+  showProximity: 0
+  showLookProximity: 0
   showFieldOfView: 1
-  showDebugText: 1
+  showDebugText: 0
   NavAgent: {fileID: 0}
   Player: {fileID: 0}
   animator: {fileID: 0}
@@ -42348,6 +42461,20 @@ MonoBehaviour:
   CurrentPatrolIndex: 0
   PatrolDirection: 1
   PlayerThreatLevel: 0
+--- !u!114 &7702629915161407113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3985335342201024068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d270f3207cfa3814ea27e23734c107d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holsteredWeapon: {fileID: 1220553155}
+  weaponObject: {fileID: 3819919303337389713}
 --- !u!1 &7706318911079178521
 GameObject:
   m_ObjectHideFlags: 0
@@ -43685,3 +43812,4 @@ SceneRoots:
   - {fileID: 1400072238}
   - {fileID: 1798230902}
   - {fileID: 4324882587110864126}
+  - {fileID: 1686548233}

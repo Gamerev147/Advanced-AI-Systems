@@ -8,16 +8,75 @@ public class PatrolPathEditor : Editor
     private Vector3 m_LastPosition;
 
     private bool _toggleGizmos = true;
+    private bool _showAppearance = false;
+
+    private Color _handleColor = Color.green;
+    private Color _lineColor = Color.green;
+    private Color _labelColor = Color.white;
+    private float _lineThickness = 0.1f;
+    private float _handleSize = 0.25f;
 
     private void OnEnable()
     {
         m_Agent = (AI_Agent)target;
         m_LastPosition = m_Agent.transform.position;
+
+        // Load saved appearance settings
+        if (EditorPrefs.HasKey($"{m_Agent.GetInstanceID()}_HandleColor"))
+        {
+            _handleColor = EditorPrefsX.GetColor($"{m_Agent.GetInstanceID()}_HandleColor");
+        }
+
+        if (EditorPrefs.HasKey($"{m_Agent.GetInstanceID()}_LineColor"))
+        {
+            _lineColor = EditorPrefsX.GetColor($"{m_Agent.GetInstanceID()}_LineColor");
+        }
+
+        if (EditorPrefs.HasKey($"{m_Agent.GetInstanceID()}_LabelColor"))
+        {
+            _labelColor = EditorPrefsX.GetColor($"{m_Agent.GetInstanceID()}_LabelColor");
+        }
+
+        if (EditorPrefs.HasKey($"{m_Agent.GetInstanceID()}_LineThickness"))
+        {
+            _lineThickness = EditorPrefs.GetFloat($"{m_Agent.GetInstanceID()}_LineThickness");
+        }
+
+        if (EditorPrefs.HasKey($"{m_Agent.GetInstanceID()}_HandleSize"))
+        {
+            _handleSize = EditorPrefs.GetFloat($"{m_Agent.GetInstanceID()}_HandleSize");
+        }
     }
 
     public override void OnInspectorGUI()
     {
         EditorGUILayout.LabelField("Patrol Point Editor", EditorStyles.boldLabel);
+
+        // Foldout for appearance settings
+        _showAppearance = EditorGUILayout.Foldout(_showAppearance, "Appearance Settings");
+        if (_showAppearance)
+        {
+            EditorGUI.BeginChangeCheck();
+            _handleColor = EditorGUILayout.ColorField("Handle Color", _handleColor);
+            _lineColor = EditorGUILayout.ColorField("Line Color", _lineColor);
+            _labelColor = EditorGUILayout.ColorField("Label Color", _labelColor);
+            _lineThickness = EditorGUILayout.Slider("Line Thickness", _lineThickness, 1f, 6f);
+            _handleSize = EditorGUILayout.Slider("Handle Size", _handleSize, 0.1f, 2f);
+
+            // Save the appearance settings after changes
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorPrefsX.SetColor($"{m_Agent.GetInstanceID()}_HandleColor", _handleColor);
+                EditorPrefsX.SetColor($"{m_Agent.GetInstanceID()}_LineColor", _lineColor);
+                EditorPrefsX.SetColor($"{m_Agent.GetInstanceID()}_LabelColor", _labelColor);
+                EditorPrefs.SetFloat($"{m_Agent.GetInstanceID()}_LineThickness", _lineThickness);
+                EditorPrefs.SetFloat($"{m_Agent.GetInstanceID()}_HandleSize", _handleSize);
+                SceneView.RepaintAll();
+            }
+        }
+
+        EditorGUILayout.Space(20f);
+        EditorGUILayout.LabelField("Patrol Point Settings");
 
         // Button to create patrol point in front of entity
         if (GUILayout.Button("Add Patrol Point"))
@@ -91,7 +150,27 @@ public class PatrolPathEditor : Editor
                 EditorUtility.SetDirty(m_Agent);
             }
 
-            if (_toggleGizmos) Handles.Label(worldPos + Vector3.up * 0.25f, $"Waypoint {i}");
+            // Draw point handles and lables
+            Handles.color = _handleColor;
+            if (_toggleGizmos) Handles.SphereHandleCap(0, worldPos, Quaternion.identity, _handleSize, EventType.Repaint);
+            
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = _labelColor;
+            if (_toggleGizmos) Handles.Label(worldPos + Vector3.up * 0.25f, $"Waypoint {i}", style);
+
+            // Draw point connection lines
+            Handles.color = _lineColor;
+            if (i < m_Agent.PatrolPoints.Count - 1)
+            {
+                Vector3 nextPos = m_Agent.PatrolPoints[i + 1].Position;
+                if (_toggleGizmos) Handles.DrawLine(worldPos, nextPos, _lineThickness);
+            }
+
+            // Draw loop connection
+            if (m_Agent.LoopPatrol && m_Agent.PatrolPoints.Count > 2)
+            {
+                if (_toggleGizmos) Handles.DrawLine(m_Agent.PatrolPoints[m_Agent.PatrolPoints.Count - 1].Position, m_Agent.PatrolPoints[0].Position, _lineThickness);
+            }
         }
     }
 
